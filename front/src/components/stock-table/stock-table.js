@@ -1,13 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
+
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
+
+import { SelectedStocksState } from '../../states/states';
 
 import styles from './stock-table.module.css';
 
 export default function StockTable() {
     const [rowData, setRowData] = useState();
     const [isLoaded, setIsLoaded] = useState(false);
+    const setSelectedStocks = useSetRecoilState(SelectedStocksState);
 
     const onGridReady = useCallback(() => {
         setIsLoaded(true);
@@ -36,7 +41,7 @@ export default function StockTable() {
 
     const onSelectionChanged = (event) => {
         const selectedRows = event.api.getSelectedRows();
-        console.log(selectedRows);
+        setSelectedStocks(selectedRows);
     }
 
     return (

@@ -1,42 +1,21 @@
 import { useState, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
+
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
+
+import { SelectedStocksState } from '../../states/states';
 
 import styles from './selected-stock-table.module.css';
 
 export default function SelectedStockTable() {
     const [rowData, setRowData] = useState([]);
-    
+    const selectedStocks = useRecoilValue(SelectedStocksState);
+
     useEffect(() => {
-        const dummyData = [
-            {
-                ticker: 'AAPL',
-                name: 'Apple',
-                price: 100,
-                dividend_yield: 1.5,
-                dividend_growth_1y: 1.1,
-                dividend_growth_5y: 1.2
-            },
-            {
-                ticker: 'MSFT',
-                name: 'Microsoft',
-                price: 200,
-                dividend_yield: 1.5,
-                dividend_growth_1y: 1.1,
-                dividend_growth_5y: 1.2
-            },
-            {
-                ticker: 'AMZN',
-                name: 'Amazon',
-                price: 300,
-                dividend_yield: 1.5,
-                dividend_growth_1y: 1.1,
-                dividend_growth_5y: 1.2
-            }
-        ];
-        setRowData(dummyData);
-    }, []);
+        setRowData(selectedStocks);
+    }, [selectedStocks]);
 
     const colDefs = [
         { headerName: 'Ticker', field: 'ticker', flex: 0.4 },
