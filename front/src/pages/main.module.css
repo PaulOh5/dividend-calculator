@@ -1,0 +1,13 @@
+.tableContainer {
+    display: flex;
+    gap: 40px;
+    height: 80%;
+}
+
+.stockListTable {
+    flex: 2;
+}
+
+.selectedStockTable {
+    flex: 1;
+}
