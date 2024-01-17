@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css'
@@ -9,7 +9,7 @@ import { SelectedStocksState } from '../../states/states';
 
 import styles from './selected-stock-table.module.css';
 
-export default function SelectedStockTable() {
+export default function SelectedStockTable(props) {
     const [rowData, setRowData] = useState([]);
     const selectedStocks = useRecoilValue(SelectedStocksState);
 
@@ -18,17 +18,19 @@ export default function SelectedStockTable() {
     }, [selectedStocks]);
 
     const colDefs = [
-        { headerName: 'Ticker', field: 'ticker', flex: 0.4 },
+        { headerName: 'Ticker', field: 'ticker', width: 100, rowDrag: true },
         { headerName: '이름', field: 'name', flex: 1 },
-        { headerName: '현재가', field: 'price', flex: 0.7 },
-        { headerName: '배당률', field: 'dividend_yield', flex: 0.7 },
-        { headerName: '배당성장률', field: 'dividend_growth_1y', flex: 0.7 },
-        { headerName: '연평균 배당성장률(5년)', field: 'dividend_growth_5y', flex: 0.7 }
+        { headerName: '배당률', field: 'dividend_yield', flex: 1 },
+        { headerName: '적립 비율', field: 'rate', flex: 1, editable: true },
     ]
 
     const onSelectionChanged = (event) => {
         const selectedRows = event.api.getSelectedRows();
         console.log(selectedRows);
+    }
+
+    const onGridReady = (params) => {
+        props.setSelectedStocksTable(params.api);
     }
 
     return (
@@ -39,6 +41,9 @@ export default function SelectedStockTable() {
                 rowSelection={'multiple'}
                 rowMultiSelectWithClick={true}
                 onSelectionChanged={onSelectionChanged}
+                rowDragManaged={true}
+                suppressMoveWhenRowDragging={true}
+                onGridReady={onGridReady}
             />
         </div>
     )
