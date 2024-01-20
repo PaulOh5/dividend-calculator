@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+import json
 
 from db import crud, schemas, models
 from db.base import get_db, engine
@@ -22,6 +23,11 @@ app.add_middleware(
 async def get_stock(db: Session = Depends(get_db)):
     result = crud.get_stock_list(db)
     return {"stocks": result}
+
+@app.get("/stocks/caculate")
+async def caculate(data: str, db: Session = Depends(get_db)):
+    rates = json.loads(data)
+    return {"result": data}
 
 @app.get("/stocks/{ticker}")
 async def get_stock(ticker: str, db: Session = Depends(get_db)):
