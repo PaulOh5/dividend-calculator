@@ -1,3 +1,10 @@
+.mainContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+}
+
 .tableContainer {
     display: flex;
     gap: 40px;
