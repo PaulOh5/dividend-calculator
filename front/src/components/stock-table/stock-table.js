@@ -1,11 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css'
 import 'ag-grid-community/styles/ag-theme-quartz.css'
-
-import { SelectedStocksState, SelectedStocksTableApiState } from '../../states/states';
 
 import styles from './stock-table.module.css';
 
@@ -13,23 +10,21 @@ export default function StockTable(props) {
     const [rowData, setRowData] = useState();
     const [isLoaded, setIsLoaded] = useState(false);
     const [stocksTable, setStocksTable] = useState(null);
-    const [selectedStocks, setSelectedStocks] = useRecoilState(SelectedStocksState);
 
     const handleSelection = (params) => {
-        const draggedRow = { ...params.node.data, rate: 0.0 };
-        setRowData((prev) => prev.filter(stock => stock.ticker !== draggedRow.ticker));
-        setSelectedStocks((prev) => [draggedRow, ...prev ]);
+        const draggedRow = {...params.node.data, rate: 0};
+        props.selectedStocksTable.applyTransaction({update: [draggedRow]});
+        stocksTable.applyTransaction({remove: [draggedRow]});
     }
 
     const handleDeleteSelection = (params) => {
-        const {rate, ...draggedRow} = params.node.data;
-        console.log(draggedRow);
-        setRowData((prev) => [draggedRow, ...prev]);
-        setSelectedStocks((prev) => prev.filter(stock => stock.ticker !== draggedRow.ticker));
+        const {rate, ...draggedRow}= params.node.data;
+        props.selectedStocksTable.applyTransaction({remove: [draggedRow]});
+        stocksTable.applyTransaction({update: [draggedRow]});
     }
 
     useEffect(() => {
-        if (props.selectedStocksTable !== null && stocksTable !== null) {
+        if (props.selectedStocksTable && stocksTable) {
             const targetDropZoneParams = props.selectedStocksTable.getRowDropZoneParams({onDragStop: handleSelection});
             const sourceDropZoneParams = stocksTable.getRowDropZoneParams({onDragStop: handleDeleteSelection});
             stocksTable.removeRowDropZone(targetDropZoneParams);
@@ -85,26 +80,18 @@ export default function StockTable(props) {
         { headerName: '연평균 배당성장률(5년)', field: 'dividend_growth_5y', width: 180 }
     ]
 
-    const onSelectionChanged = (event) => {
-        const selectedRows = event.api.getSelectedRows();
-        setSelectedStocks(selectedRows);
-    }
-
     return (
         <div className='ag-theme-quartz' style={{overflow: 'auto', width: '100%', height: '100%'}}>
             <AgGridReact
+                getRowId={params => params.data.id}
                 rowData={rowData}
                 columnDefs={colDefs}
-                rowSelection={'multiple'}
-                rowMultiSelectWithClick={true}
-                onSelectionChanged={onSelectionChanged}
+                suppressRowClickSelection={true}
+                suppressCellFocus={true}
                 onGridReady={onGridReady}
                 overlayLoadingTemplate={
                     '<div style="height:100px; width:100px; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;" aria-label="loading"></div>'
                   }
-                // autoSizeStrategy={{
-                //     type: 'fitCellContents'
-                // }}
                 rowDragManaged={true}
                 suppressMoveWhenRowDragging={true}
             />
