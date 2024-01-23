@@ -1,9 +1,10 @@
 import os
 import math
 import pandas as pd
+from .services import crud
 
 from db.base import get_db, engine
-from db import models, schemas, crud
+from db import models, schemas
 
 models.Base.metadata.create_all(bind=engine)
 

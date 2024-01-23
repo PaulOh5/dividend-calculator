@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from db import models, schemas
 
 def create_stock(db: Session, stock: schemas.StockCreate):
     db_stock = models.Stock(**stock.model_dump())
@@ -10,7 +10,6 @@ def create_stock(db: Session, stock: schemas.StockCreate):
 
     return db_stock
     
-
 def get_stock_list(db: Session):
     stocks = db.query(models.Stock).all()
     return stocks
