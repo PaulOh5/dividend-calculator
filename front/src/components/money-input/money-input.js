@@ -1,26 +1,35 @@
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { MonthlySaving, TargetDividend } from '../../states';
+
 import TextField from '@mui/material/TextField';
+
 import styles from './money-input.module.css';
 
 export default function MoneyInput() {
-    const [money, setMoney] = useState('');
+    const setMoney = useSetRecoilState(MonthlySaving);
+    const [moneyInput, setMoneyInput] = useState('');
     const [moneyString, setMoneyString] = useState('');
-    const [dividend, setDividend] = useState('');
+
+    const setDividend= useSetRecoilState(TargetDividend);
+    const [dividendInput, setDividendInput] = useState('');
     const [dividendString, setDividendString] = useState('');
   
     const onChangeMoney = (e) => {
       const value = e.target.value;
       const number = value.replace(/^0+|[^0-9]+/g, '');
+      setMoney(number);
       const numberWithComma = number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-      setMoney(numberWithComma);
+      setMoneyInput(numberWithComma);
       setMoneyString(numberToKoreanMoney(number));
     }
   
     const onChangeDividend = (e) => {
       const value = e.target.value;
       const number = value.replace(/^0+|[^0-9]+/g, '');
+      setDividend(number);
       const numberWithComma = number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-      setDividend(numberWithComma);
+      setDividendInput(numberWithComma);
       setDividendString(numberToKoreanMoney(number));
     }
   
@@ -76,7 +85,7 @@ export default function MoneyInput() {
             <TextField 
               label='매달 적립금'
               size='small' 
-              value={money} 
+              value={moneyInput} 
               onChange={onChangeMoney}/>
           </div>
             <p>{moneyString}</p>
@@ -87,7 +96,7 @@ export default function MoneyInput() {
           <TextField 
             label='희망 월배당'
             size='small'
-            value={dividend}
+            value={dividendInput}
             onChange={onChangeDividend}  
           />
           </div>

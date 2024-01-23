@@ -1,8 +1,12 @@
+import { useRecoilValue } from "recoil";
+import { MonthlySaving, TargetDividend } from "../../states";
 import { Button } from "@mui/material";
 
 import styles from './submit-button.module.css';
 
 export default function SubmitButton(props) {
+    const monthlySaving = useRecoilValue(MonthlySaving);
+    const targetDividend = useRecoilValue(TargetDividend);
 
     const onClick = () => {
         const selectedStocks = [];
@@ -11,11 +15,17 @@ export default function SubmitButton(props) {
         });
         const sum = selectedStocks.reduce((acc, cur) => acc + cur.rate, 0);
         if (sum !== 100) {
-            alert('비중의 합은 100%가 되어야 합니다.');
+            alert('적립 비율의 합은 100%가 되어야 합니다.');
             return;
         }
 
-        const url = 'http://127.0.0.1:8000/stocks/caculate?data=' + JSON.stringify(selectedStocks);
+        const queyr_params = {
+            monthly_saving: monthlySaving,
+            target_dividend: targetDividend,
+            selected_stocks: selectedStocks,
+        }
+
+        const url = 'http://127.0.0.1:8000/stocks/caculate?data=' + JSON.stringify(queyr_params);
         fetch(url, {
             mode: 'cors',
             method: 'GET',
