@@ -1,4 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
+
+import { SelectedStocks } from '../../states';
+import { percentFormatter } from '../../utils/formatter';
 
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css'
@@ -10,17 +14,20 @@ export default function StockTable(props) {
     const [rowData, setRowData] = useState();
     const [isLoaded, setIsLoaded] = useState(false);
     const [stocksTable, setStocksTable] = useState(null);
+    const setSelectedStocks = useSetRecoilState(SelectedStocks);
 
     const handleSelection = (params) => {
         const draggedRow = {...params.node.data, rate: 0};
         props.selectedStocksTable.applyTransaction({update: [draggedRow]});
         stocksTable.applyTransaction({remove: [draggedRow]});
+        setSelectedStocks(prev => [...prev, {...draggedRow}]);
     }
 
     const handleDeleteSelection = (params) => {
         const {rate, ...draggedRow}= params.node.data;
         props.selectedStocksTable.applyTransaction({remove: [draggedRow]});
         stocksTable.applyTransaction({update: [draggedRow]});
+        setSelectedStocks(prev => [...prev.filter(stock => stock.id !== draggedRow.id)]);
     }
 
     useEffect(() => {
@@ -59,9 +66,9 @@ export default function StockTable(props) {
                     if (value === null) {
                         stock[key] = 'N/A';
                     }
-                    else if (key === 'dividend_yield' || key === 'dividend_growth_1y' || key === 'dividend_growth_5y') {
-                        stock[key] = `${Math.round(value * 10000)/100}%`;
-                    }
+                    // else if (key === 'dividend_yield' || key === 'dividend_growth_1y' || key === 'dividend_growth_5y') {
+                    //     stock[key] = `${Math.round(value * 10000)/100}%`;
+                    // }
                 }
                 return stock;
             });
@@ -75,9 +82,9 @@ export default function StockTable(props) {
         { headerName: 'Ticker', field: 'ticker', width: 100, rowDrag: true },
         { headerName: '이름', field: 'name', flex: 1 },
         { headerName: '가격($)', field: 'price', flex: 0.6 },
-        { headerName: '배당률', field: 'dividend_yield', flex: 0.6 },
-        { headerName: '배당성장률', field: 'dividend_growth_1y', flex: 0.6 },
-        { headerName: '연평균 배당성장률(5년)', field: 'dividend_growth_5y', width: 180 }
+        { headerName: '배당률', field: 'dividend_yield', flex: 0.6, valueFormatter: percentFormatter },
+        { headerName: '배당성장률', field: 'dividend_growth_1y', flex: 0.6, valueFormatter: percentFormatter },
+        { headerName: '연평균 배당성장률(5년)', field: 'dividend_growth_5y', width: 180, valueFormatter: percentFormatter }
     ]
 
     return (

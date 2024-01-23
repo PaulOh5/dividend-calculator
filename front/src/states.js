@@ -9,3 +9,8 @@ export const TargetDividend = atom({
     key: 'targetDividend',
     default: 0,
 });
+
+export const SelectedStocks = atom({
+    key: 'selectedStocks',
+    default: [],
+})

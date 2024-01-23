@@ -1,6 +1,9 @@
+import { Routes, Route } from "react-router-dom";
+
 import { AppBar } from "@mui/material"
 
 import Home from "./pages/main";
+import Result from "./pages/result";
 
 import './App.css';
 
@@ -11,7 +14,10 @@ function App() {
         <h2 className='title'>Sample</h2>
       </AppBar>
       <div className='content'>
-        <Home/>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/result" element={<Result/>} />
+        </Routes>
       </div>
     </div>
   );
