@@ -59,10 +59,6 @@ export default function SelectedStockTable(props) {
         console.log(selectedStocks);
     }, [selectedStocks]);
 
-    // useEffect(() => {
-    //     console.log(rowData);
-    // }, [rowData]);
-
     return (
         <div className='ag-theme-quartz' style={{width: '100%', height: '100%'}}>
             <AgGridReact

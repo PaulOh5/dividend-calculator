@@ -66,9 +66,6 @@ export default function StockTable(props) {
                     if (value === null) {
                         stock[key] = 'N/A';
                     }
-                    // else if (key === 'dividend_yield' || key === 'dividend_growth_1y' || key === 'dividend_growth_5y') {
-                    //     stock[key] = `${Math.round(value * 10000)/100}%`;
-                    // }
                 }
                 return stock;
             });
